@@ -330,7 +330,7 @@
     <!-- Application Script -->
     <script>
         const ADMIN_PASSWORD = "13242526";
-        const MY_WHATSAPP_NUMBER = "967777466525";
+        const MY_WHATSAPP_NUMBER = "967775010662";
 
         const defaultData = {
             companyName: "Feature Logic",
@@ -572,22 +572,22 @@
             const now = new Date();
             const dateStr = now.toLocaleDateString('ar-SA') + ' - ' + now.toLocaleTimeString('ar-SA', {hour: '2-digit', minute:'2-digit'});
 
+            // حفظ الرسالة في الـ localStorage لصندوق الأدمن
             const newMessage = { name, contact, message, date: dateStr };
             incomingMessages.unshift(newMessage);
             localStorage.setItem('hamzah_incoming_messages', JSON.stringify(incomingMessages));
             updateBadgeCount();
 
-            const text = `📌 *رسالة جديدة من الموقع*\n\n👤 *الاسم:* ${name}\n📞 *رقم الهاتف:* ${contact}\n💬 *الرسالة:* ${message}`;
+            // إظهار رسالة النجاح وتفريغ الحقول دون فتح أي روابط خارجية
             const toast = document.getElementById('form-toast');
+            toast.textContent = "تم إرسال رسالتك وحفظها بنجاح في صندوق الوارد لدى الأدمن!";
             toast.classList.remove('hidden');
             document.getElementById('contact-form').reset();
 
             setTimeout(() => {
                 toast.classList.add('hidden');
-                window.open(`https://wa.me/${MY_WHATSAPP_NUMBER}?text=${encodeURIComponent(text)}`, '_blank');
-            }, 1000);
+            }, 5000);
         }
-
         window.onload = function() {
             renderProfile();
             checkAdminState();
