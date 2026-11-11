@@ -563,17 +563,21 @@
             }
         }
 
-     async function handleFormSubmit(e) {
+    async function handleFormSubmit(e) {
             e.preventDefault();
             
             const name = document.getElementById('form-name').value.trim();
             const contact = document.getElementById('form-contact').value.trim();
             const message = document.getElementById('form-message').value.trim();
             
-            const formData = { name, contact, message };
+            // ضبط أسماء الحقول لتتوافق تماماً مع متطلبات Formspree الرسمية
+            const formData = {
+                name: name,
+                email: contact, // تمرير حقل الاتصال تحت اسم email لتقبله المنصة بلا مشاكل
+                message: message
+            };
 
             try {
-                // إرسال البيانات مباشرة إلى Formspree السحابي
                 const response = await fetch("https://formspree.io/f/xzerprwo", {
                     method: "POST",
                     headers: {
@@ -589,7 +593,12 @@
                     toast.classList.remove('hidden');
                     document.getElementById('contact-form').reset();
                 } else {
-                    toast.textContent = "حدث خطأ أثناء الإرسال، يرجى المحاولة لاحقاً.";
+                    const data = await response.json();
+                    if (data.errors) {
+                        toast.textContent = "خطأ: " + data.errors.map(err => err.message).join(', ');
+                    } else {
+                        toast.textContent = "حدث خطأ أثناء الإرسال، يرجى المحاولة لاحقاً.";
+                    }
                     toast.classList.remove('hidden');
                 }
 
