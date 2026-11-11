@@ -573,14 +573,22 @@
             const dateStr = now.toLocaleDateString('ar-SA') + ' - ' + now.toLocaleTimeString('ar-SA', {hour: '2-digit', minute:'2-digit'});
 
             // حفظ الرسالة في الـ localStorage لصندوق الأدمن
+            let currentMessages = JSON.parse(localStorage.getItem('hamzah_incoming_messages')) || [];
             const newMessage = { name, contact, message, date: dateStr };
-            incomingMessages.unshift(newMessage);
-            localStorage.setItem('hamzah_incoming_messages', JSON.stringify(incomingMessages));
+            currentMessages.unshift(newMessage);
+            
+            localStorage.setItem('hamzah_incoming_messages', JSON.stringify(currentMessages));
+            incomingMessages = currentMessages;
             updateBadgeCount();
+
+            // تحديث نافذة الرسائل إذا كانت مفتوحة للأدمن
+            if (!document.getElementById('messages-modal').classList.contains('hidden')) {
+                renderMessagesList();
+            }
 
             // إظهار رسالة النجاح وتفريغ الحقول دون فتح أي روابط خارجية
             const toast = document.getElementById('form-toast');
-            toast.textContent = "تم إرسال رسالتك وحفظها بنجاح في صندوق الوارد لدى الأدمن!";
+            toast.textContent = "تم إرسال رسالتك وحفظها بنجاح في صندوق الوارد!";
             toast.classList.remove('hidden');
             document.getElementById('contact-form').reset();
 
@@ -588,10 +596,12 @@
                 toast.classList.add('hidden');
             }, 5000);
         }
-        window.onload = function() {
+
+        // Initialize App on Load
+        window.addEventListener('DOMContentLoaded', () => {
             renderProfile();
             checkAdminState();
-        };
+        });
     </script>
 </body>
 </html>
